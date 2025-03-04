@@ -1,0 +1,43 @@
+using UnityEngine;
+using UnityEngine.XR;
+
+public class ArmLocomotion : MonoBehaviour
+{
+    public Transform leftHand; // Assign XR Left Hand Transform
+    public Transform rightHand; // Assign XR Right Hand Transform
+    public float moveSpeed = 3f; // Adjust movement speed
+    public float dragThreshold = 0.1f; // Minimum hand movement to trigger motion
+
+    private Vector3 lastLeftHandPos;
+    private Vector3 lastRightHandPos;
+    private Rigidbody rb;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        lastLeftHandPos = leftHand.position;
+        lastRightHandPos = rightHand.position;
+    }
+
+    void FixedUpdate()
+    {
+        Vector3 leftHandMovement = leftHand.position - lastLeftHandPos;
+        Vector3 rightHandMovement = rightHand.position - lastRightHandPos;
+
+        Vector3 movement = Vector3.zero; //canvas shit
+
+        // Check if ur controllers move enough for you to move
+        if (leftHandMovement.magnitude > dragThreshold)
+            movement += -leftHandMovement; // Move opposite to hand movement
+
+        if (rightHandMovement.magnitude > dragThreshold)
+            movement += -rightHandMovement;
+
+        // movement go brrrrr.
+        rb.velocity = new Vector3(movement.x, rb.velocity.y, movement.z) * moveSpeed;
+
+        // current position
+lastLeftHandPos = leftHand.position;
+        lastRightHandPos = rightHand.position;
+    }
+}
